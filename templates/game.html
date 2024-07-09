@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Unstable Unicorns - Juego</title>
+</head>
+<body>
+    <h1>Unstable Unicorns - Juego {{ game_id }}</h1>
+    <div id="game-state"></div>
+    <div id="player-hand"></div>
+    <button id="draw-card">Robar carta</button>
+    <button id="end-turn">Terminar turno</button>
+    <script type="text/javascript">
+        var game_id = "{{ game_id }}";
+        var socket = io();
+
+        socket.on('connect', function() {
+            socket.emit('join', {game_id: game_id});
+        });
+
+        socket.on('update_game', function(data) {
+            document.getElementById('game-state').innerText = JSON.stringify(data);
+            updatePlayerHand(data);
+        });
+
+        function updatePlayerHand(gameState) {
+            var handDiv = document.getElementById('player-hand');
+            handDiv.innerHTML = '';
+            var currentPlayer = gameState.players.find(p => p.id === gameState.current_player);
+            if (currentPlayer) {
+                currentPlayer.hand.forEach(function(card) {
+                    var cardButton = document.createElement('button');
+                    cardButton.innerText = card.name;
+                    cardButton.onclick = function() { playCard(card.id); };
+                    handDiv.appendChild(cardButton);
+                });
+            }
+        }
+
+        function playCard(cardId) {
+            socket.emit('play_card', {game_id: game_id, card_id: cardId});
+        }
+
+        document.getElementById('draw-card').onclick = function() {
+            socket.emit('draw_card', {game_id: game_id});
+        };
+
+        document.getElementById('end-turn').onclick = function() {
+            socket.emit('end_turn', {game_id: game_id});
+        };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</body>
+</html>
