@@ -5,7 +5,7 @@ import json
 import threading
 import time
 from logic_game import LogicGame
-
+#SERGIO
 class UnstableUnicornsGUI:
     def __init__(self, master):
         self.master = master
