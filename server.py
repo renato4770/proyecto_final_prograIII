@@ -35,25 +35,19 @@ class GameServer:
         print(f"New connection from {addr}")
         player = self.game.add_player(f"Player_{len(self.clients)}")
         self.clients.append(conn)
-        
-        # Send the player_id to the client
-        initial_message = json.dumps({"player_id": player.id})
+
+        initial_message = json.dumps({"player_id": player.id}) + '\n'
         conn.send(initial_message.encode('utf-8'))
-        
-        self.broadcast_game_state()
 
         while True:
             try:
-                data = conn.recv(1024).decode('utf-8')
-                if not data:
-                    print(f"No data received from {addr}. Closing connection.")
+                message = conn.recv(1024).decode('utf-8')
+                if not message:
+                    print(f"Connection closed by {addr}")
                     break
-                print(f"Received data from {addr}: {data}")
-                message = json.loads(data)
-                if message['action'] == 'heartbeat':
-                    print(f"Heartbeat received from {addr}")
-                    continue
-                self.handle_message(message, player)
+                print(f"Message from {addr}: {message.strip()}")
+                message_json = json.loads(message)
+                self.handle_message(message_json, player)
             except ConnectionResetError:
                 print(f"Connection reset by {addr}. Closing connection.")
                 break
@@ -76,7 +70,7 @@ class GameServer:
 
     def broadcast_game_state(self):
         game_state = self.game.get_game_state()
-        game_state_json = json.dumps(game_state)
+        game_state_json = json.dumps(game_state) + '\n'
         for client in self.clients:
             try:
                 client.send(game_state_json.encode('utf-8'))

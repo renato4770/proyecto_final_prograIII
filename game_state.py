@@ -1,15 +1,17 @@
 from typing import List, Dict
 
 class GameState:
-    def get_state(self, players: List['Player'], current_player_index: int) -> Dict:
-        return {
-            'players': [self._get_player_state(player) for player in players],
-            'current_player': players[current_player_index].id
-        }
+        def __init__(self):
+            self.players = []
+            self.current_player = None
 
-    def _get_player_state(self, player: 'Player') -> Dict:
-        return {
-            'id': player.id,
-            'hand_size': len(player.hand),
-            'stable': [card.to_dict() for card in player.stable]
-        }
+        def update_state(self, state):
+            self.players = state['players']
+            self.current_player = state['current_player']
+
+        def get_state(self, player_id):
+            return {
+                'players': self.players,
+                'current_player': self.current_player,
+                'player_id': player_id
+            }
