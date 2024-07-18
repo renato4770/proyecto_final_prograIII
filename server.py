@@ -11,15 +11,16 @@ class GameServer:
         self.server.bind((self.host, self.port))
         self.game = LogicGame()
         self.clients = []
+        self.max_players = 4
 
     def start(self):
-        self.server.listen(4)
+        self.server.listen(self.max_players)
         print(f"Server is listening on {self.host}:{self.port}")
         while True:
             try:
                 conn, addr = self.server.accept()
                 print(f"New connection from {addr}")
-                if len(self.clients) < 4:
+                if len(self.clients) < self.max_players:
                     thread = threading.Thread(target=self.handle_client, args=(conn, addr))
                     thread.start()
                     print(f"Active connections: {len(self.clients)}")
@@ -33,7 +34,7 @@ class GameServer:
 
     def handle_client(self, conn, addr):
         print(f"New connection from {addr}")
-        player = self.game.add_player(f"Player_{len(self.clients)}")
+        player = self.game.add_player(f"Player_{len(self.clients) + 1}")
         self.clients.append(conn)
         
         # Send the player_id to the client

@@ -5,7 +5,7 @@ import json
 import threading
 import time
 from logic_game import LogicGame
-#SERGIO 123
+#SERGIO
 class UnstableUnicornsGUI:
     def __init__(self, master):
         self.master = master
@@ -117,7 +117,7 @@ class UnstableUnicornsGUI:
             # Establo del jugador
             stable_label = tk.Label(player_frame, text="Establo:")
             stable_label.pack()
-            stable_listbox = tk.Listbox(player_frame, height=5)
+            stable_listbox = tk.Listbox(player_frame, height=4)
             stable_listbox.pack()
 
         # Frame para la mano del jugador actual
@@ -141,23 +141,23 @@ class UnstableUnicornsGUI:
         end_turn_button.grid(row=0, column=1, padx=5)
 
     def update_gui(self, game_state):
-        print(f"Actualizando GUI con el estado del juego: {game_state}")
-        for i, player in enumerate(game_state['players']):
-            stable_listbox = self.player_frames[i].winfo_children()[1]
-            stable_listbox.delete(0, tk.END)
-            for card in player['stable']:
-                stable_listbox.insert(tk.END, card['name'])
-
+     print(f"Actualizando GUI con el estado del juego: {game_state}")
+     for i, player in enumerate(game_state['players']):
+        stable_listbox = self.player_frames[i].winfo_children()[1]
+        stable_listbox.delete(0, tk.END)
+        for card in player['stable']:
+            stable_listbox.insert(tk.END, card['name'])
+        
         if self.player_id:
-            current_player = next(player for player in game_state['players'] if player['id'] == self.player_id)
-            for i, button in enumerate(self.hand_buttons):
-                if i < len(current_player['hand']):
-                    button.config(text=current_player['hand'][i]['name'])
-                else:
-                    button.config(text="")
-            self.master.title(f"Unstable Unicorns - Turno de {game_state['current_player']}")
-        else:
-            print("Player ID no está definido aún.")
+          current_player = next(player for player in game_state['players'] if player['id'] == self.player_id)
+          for i, button in enumerate(self.hand_buttons):
+            if i < len(current_player['hand']):
+                button.config(text=current_player['hand'][i]['name'])
+            else:
+                button.config(text="")
+        self.master.title(f"Unstable Unicorns - Turno de {game_state['current_player']}")
+     else:
+        print("Player ID no está definido aún.")
 
 if __name__ == "__main__":
     root = tk.Tk()

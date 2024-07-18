@@ -1,5 +1,7 @@
 from typing import List, Dict
 
+from player import Player
+
 class GameState:
     def get_state(self, players: List['Player'], current_player_index: int) -> Dict:
         return {
